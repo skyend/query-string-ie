@@ -1,5 +1,5 @@
 {
-	"name": "query-string-ie",
+	"name": "query-string-ie11",
 	"version": "6.8.1",
 	"description": "Parse and stringify URL query strings for IE",
 	"license": "MIT",
