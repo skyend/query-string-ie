@@ -6,60 +6,65 @@ const splitOnFirst = require('split-on-first');
 function encoderForArrayFormat(options) {
 	switch (options.arrayFormat) {
 		case 'index':
-			return key => (result, value) => {
-				const index = result.length;
-				if (value === undefined) {
-					return result;
-				}
+			return function(key) {
+				return function (result, value) {
+					const index = result.length;
+					if (value === undefined) {
+						return result;
+					}
 
-				if (value === null) {
-					return [...result, [encode(key, options), '[', index, ']'].join('')];
-				}
+					if (value === null) {
+						return [].concat(result, [[encode(key, options), '[', index, ']'].join('')]);
+					}
 
-				return [
-					...result,
-					[encode(key, options), '[', encode(index, options), ']=', encode(value, options)].join('')
-				];
+					return [].concat(result, [[encode(key, options), '[', encode(index, options), ']=', encode(value, options)].join('')] );
+				}
 			};
 
 		case 'bracket':
-			return key => (result, value) => {
-				if (value === undefined) {
-					return result;
-				}
+			return function (key) {
+				return function (result, value) {
+					if (value === undefined) {
+						return result;
+					}
 
-				if (value === null) {
-					return [...result, [encode(key, options), '[]'].join('')];
-				}
+					if (value === null) {
+						return [].concat(result, [[encode(key, options), '[]'].join('')]);
+					}
 
-				return [...result, [encode(key, options), '[]=', encode(value, options)].join('')];
+					return [].concat(result, [[encode(key, options), '[]=', encode(value, options)].join('')] );
+				};
 			};
 
 		case 'comma':
-			return key => (result, value, index) => {
-				if (value === null || value === undefined || value.length === 0) {
-					return result;
-				}
+			return function (key) {
+				return function (result, value, index) {
+					if (value === null || value === undefined || value.length === 0) {
+						return result;
+					}
 
-				if (index === 0) {
-					return [[encode(key, options), '=', encode(value, options)].join('')];
-				}
+					if (index === 0) {
+						return [[encode(key, options), '=', encode(value, options)].join('')];
+					}
 
-				return [[result, encode(value, options)].join(',')];
+					return [[result, encode(value, options)].join(',')];
+				};
 			};
 
 		default:
-			return key => (result, value) => {
-				if (value === undefined) {
-					return result;
-				}
+			return function(key) {
+				return function (result, value) {
+					if (value === undefined) {
+						return result;
+					}
 
-				if (value === null) {
-					return [...result, encode(key, options)];
-				}
+					if (value === null) {
+						return [].concat(result, [encode(key, options)]);
+					}
 
-				return [...result, [encode(key, options), '=', encode(value, options)].join('')];
-			};
+					return [].concat(result, [[encode(key, options), '=', encode(value, options)].join('')]);
+				};
+			}
 	}
 }
 
@@ -68,7 +73,7 @@ function parserForArrayFormat(options) {
 
 	switch (options.arrayFormat) {
 		case 'index':
-			return (key, value, accumulator) => {
+			return function(key, value, accumulator) {
 				result = /\[(\d*)\]$/.exec(key);
 
 				key = key.replace(/\[\d*\]$/, '');
@@ -86,7 +91,7 @@ function parserForArrayFormat(options) {
 			};
 
 		case 'bracket':
-			return (key, value, accumulator) => {
+			return function(key, value, accumulator)  {
 				result = /(\[\])$/.exec(key);
 				key = key.replace(/\[\]$/, '');
 
@@ -104,14 +109,14 @@ function parserForArrayFormat(options) {
 			};
 
 		case 'comma':
-			return (key, value, accumulator) => {
+			return function(key, value, accumulator)  {
 				const isArray = typeof value === 'string' && value.split('').indexOf(',') > -1;
 				const newValue = isArray ? value.split(',') : value;
 				accumulator[key] = newValue;
 			};
 
 		default:
-			return (key, value, accumulator) => {
+			return function(key, value, accumulator)  {
 				if (accumulator[key] === undefined) {
 					accumulator[key] = value;
 					return;
@@ -215,7 +220,7 @@ function parse(input, options) {
 		return ret;
 	}
 
-	return (options.sort === true ? Object.keys(ret).sort() : Object.keys(ret).sort(options.sort)).reduce((result, key) => {
+	return (options.sort === true ? Object.keys(ret).sort() : Object.keys(ret).sort(options.sort)).reduce(function(result, key)  {
 		const value = ret[key];
 		if (Boolean(value) && typeof value === 'object' && !Array.isArray(value)) {
 			// Sort object keys, not values
@@ -231,7 +236,7 @@ function parse(input, options) {
 exports.extract = extract;
 exports.parse = parse;
 
-exports.stringify = (object, options) => {
+exports.stringify = function(object, options)  {
 	if (!object) {
 		return '';
 	}
@@ -270,7 +275,7 @@ exports.stringify = (object, options) => {
 	}).filter(x => x.length > 0).join('&');
 };
 
-exports.parseUrl = (input, options) => {
+exports.parseUrl = function(input, options)  {
 	return {
 		url: removeHash(input).split('?')[0] || '',
 		query: parse(extract(input), options)

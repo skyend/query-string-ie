@@ -1,12 +1,12 @@
 {
-	"name": "query-string",
+	"name": "query-string-ie",
 	"version": "6.8.1",
-	"description": "Parse and stringify URL query strings",
+	"description": "Parse and stringify URL query strings for IE",
 	"license": "MIT",
-	"repository": "sindresorhus/query-string",
+	"repository": "skyend/query-string-ie",
 	"author": {
-		"name": "Sindre Sorhus",
-		"email": "sindresorhus@gmail.com",
+		"name": "Theodore Han",
+		"email": "theskyend0@gmail.com",
 		"url": "sindresorhus.com"
 	},
 	"engines": {

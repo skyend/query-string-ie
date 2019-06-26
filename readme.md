@@ -1,3 +1,8 @@
+# This Project forked from sindresorhus/query-string
+
+This project is created for support IE without Babel Compile
+
+
 # query-string [![Build Status](https://travis-ci.org/sindresorhus/query-string.svg?branch=master)](https://travis-ci.org/sindresorhus/query-string)
 
 > Parse and stringify URL [query strings](https://en.wikipedia.org/wiki/Query_string)
